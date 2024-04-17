@@ -1,0 +1,13 @@
+<div *ngIf="rates">
+    <table>
+      <caption *ngIf="showRates"><h2>Aktualne kursy:</h2></caption>
+      <tr *ngFor="let rate of rates">
+        <td>{{ rate.code }}</td>
+        <td>{{ rate.rate }}</td>
+      </tr>
+    </table>
+  </div>
+
+<div class="button-container">
+    <button (click)="updateRates()">Wyświetl aktualne kursy</button>
+  </div>  

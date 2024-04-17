@@ -1,0 +1,23 @@
+
+<form>
+    <label for="groupBy">Grupuj według:</label>
+    <select id="groupBy" (change)="onGroupByChange($event)">
+      <option value="year">Rok</option>
+      <option value="quarter">Kwartał</option>
+      <option value="month">Miesiąc</option>
+      <option value="day">Dzień</option>
+    </select>
+</form>
+<h2>Kursy historyczne:</h2>
+<div *ngIf="groupedData">
+  <div *ngFor="let group of groupedData | keyvalue">
+    <table>
+        <th colspan="3"><h3>{{ group.key }}</h3></th>
+        <tr *ngFor="let currency of group.value">
+            <td>{{ currency.date }}</td>
+            <td>{{ currency.code }}</td>
+            <td>{{ currency.rate }}</td>
+        </tr>
+    </table>
+    </div>
+</div>
