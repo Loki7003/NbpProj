@@ -1,0 +1,39 @@
+version: '3'
+services:
+  nbp_db:
+    image: nbp_postgres
+    ports:
+      - "6001:5432"
+    networks:
+      nbp_network:
+        ipv4_address: 172.18.0.3
+  nbp_api:
+    image: nbp_django_api
+    ports:
+      - "6002:8000"
+    networks:
+      nbp_network:
+        ipv4_address: 172.18.0.2
+    depends_on:
+      - nbp_db
+  nbp_app:
+    image: nbp_angular_app
+    ports:
+      - "6003:4200"
+    networks:
+      nbp_network:
+        ipv4_address: 172.18.0.5
+  nbp_server:
+    image: nbp_apache
+    ports:
+      - "6004:80"
+    networks:
+      nbp_network:
+        ipv4_address: 172.18.0.4
+networks:
+  nbp_network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.18.0.0/16
