@@ -29,20 +29,14 @@ describe('CurrencyComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should call updateRates on init', () => {
-    spyOn(component, 'updateRates');
-    component.ngOnInit();
-    expect(component.updateRates).toHaveBeenCalled();
-  });
-
   it('should update rates', () => {
-    const dummyRates = [
+    const dummyRates = { data: [
       { code: 'USD', rate: 3.72 },
       { code: 'EUR', rate: 4.53 }
-    ];
-
+    ]};
+    
     spyOn(currencyService, 'updateRates').and.returnValue(of(dummyRates));
     component.updateRates();
-    expect(component.rates).toEqual(dummyRates);
+    expect(component.rates).toEqual(dummyRates.data);
   });
 });

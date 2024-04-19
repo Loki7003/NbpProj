@@ -20,6 +20,7 @@ class UpdateRatesViewTest(TestCase):
     def test_update_rates(self, mock_get):
         mock_get.return_value.json.return_value = [
             {
+                'effectiveDate' : datetime.date.today().strftime('%Y-%m-%d'),
                 'rates': [
                     {'code': 'USD', 'mid': 3.72},
                     {'code': 'EUR', 'mid': 4.53}
@@ -35,8 +36,8 @@ class UpdateRatesViewTest(TestCase):
         self.assertEqual(response_data['status'], 'success')
         self.assertEqual(len(response_data['data']), 2)
         self.assertCountEqual(response_data['data'], [
-            {'code': 'USD', 'rate': 3.72},
-            {'code': 'EUR', 'rate': 4.53}
+            {'code': 'USD', 'rate': 3.72, 'date': datetime.date.today().strftime('%Y-%m-%d')},
+            {'code': 'EUR', 'rate': 4.53, 'date': datetime.date.today().strftime('%Y-%m-%d')}
         ])
 
         usd = Currency.objects.get(code='USD')
@@ -58,9 +59,9 @@ class GetCurrencyDetailsViewTest(TestCase):
 
         actual_data = response.json()
         expected_data = [
-        {'code': 'USD', 'rate': '3.72', 'date': '2022-01-01'},
-        {'code': 'EUR', 'rate': '4.54', 'date': '2022-01-02'},
-        {'code': 'GBP', 'rate': '5.11', 'date': '2022-01-03'},
+        {'code': 'USD', 'rate': '3.720000', 'date': '2022-01-01'},
+        {'code': 'EUR', 'rate': '4.540000', 'date': '2022-01-02'},
+        {'code': 'GBP', 'rate': '5.110000', 'date': '2022-01-03'},
     ]
 
         self.assertCountEqual(actual_data, expected_data)
