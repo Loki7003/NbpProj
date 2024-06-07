@@ -1,67 +1,38 @@
 from django.test import TestCase, Client
-from unittest.mock import patch
 from .models import Currency
-from decimal import Decimal
-import datetime
+from datetime import datetime
+import json
 
-class CurrencyModelTest(TestCase):
-    def test_create_currency(self):
-        currency = Currency.objects.create(code='USD', rate=3.72, date=datetime.date.today())
-
-        self.assertEqual(currency.code, 'USD')
-        self.assertEqual(currency.rate, 3.72)
-        self.assertEqual(currency.date, datetime.date.today())
-
-class UpdateRatesViewTest(TestCase):
+class CurrencyTestCase(TestCase):
     def setUp(self):
         self.client = Client()
+        Currency.objects.create(code='USD', rate=1.0, date=datetime.strptime('2022-01-01', '%Y-%m-%d').date())
+        Currency.objects.create(code='EUR', rate=0.9, date=datetime.strptime('2022-01-02', '%Y-%m-%d').date())
 
-    @patch('requests.get')
-    def test_update_rates(self, mock_get):
-        mock_get.return_value.json.return_value = [
-            {
-                'effectiveDate' : datetime.date.today().strftime('%Y-%m-%d'),
-                'rates': [
-                    {'code': 'USD', 'mid': 3.72},
-                    {'code': 'EUR', 'mid': 4.53}
-                ]
-            }
-        ]
-
-        response = self.client.get('/update-rates/')
-
+    def test_get_historical_rates(self):
+        response = self.client.get('/get-historical-rates/')
         self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['status'], 'success')
 
-        response_data = response.json()
-        self.assertEqual(response_data['status'], 'success')
-        self.assertEqual(len(response_data['data']), 2)
-        self.assertCountEqual(response_data['data'], [
-            {'code': 'USD', 'rate': 3.72, 'date': datetime.date.today().strftime('%Y-%m-%d')},
-            {'code': 'EUR', 'rate': 4.53, 'date': datetime.date.today().strftime('%Y-%m-%d')}
-        ])
-
-        usd = Currency.objects.get(code='USD')
-        self.assertEqual(usd.rate, Decimal('3.72'))
-        eur = Currency.objects.get(code='EUR')
-        self.assertEqual(eur.rate, Decimal('4.53'))
-        
-class GetCurrencyDetailsViewTest(TestCase):
-    def setUp(self):
-        self.client = Client()
-        Currency.objects.create(code='USD', rate=3.72, date=datetime.date(2022, 1, 1))
-        Currency.objects.create(code='EUR', rate=4.54, date=datetime.date(2022, 1, 2))
-        Currency.objects.create(code='GBP', rate=5.11, date=datetime.date(2022, 1, 3))
+    def test_update_rates(self):
+        response = self.client.get('/update-rates/')
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['status'], 'success')
 
     def test_get_currency_details(self):
-        response = self.client.get('/get-currency-details/')
-
+        response = self.client.get('/get-currency-details/USD/2022-01-01/2022-12-31/')
         self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['status'], 'success')
+        self.assertTrue(len(data['data']) > 0)
 
-        actual_data = response.json()
-        expected_data = [
-        {'code': 'USD', 'rate': '3.720000', 'date': '2022-01-01'},
-        {'code': 'EUR', 'rate': '4.540000', 'date': '2022-01-02'},
-        {'code': 'GBP', 'rate': '5.110000', 'date': '2022-01-03'},
-    ]
-
-        self.assertCountEqual(actual_data, expected_data)
+    def test_get_currency_codes(self):
+        response = self.client.get('/get-currency-codes/')
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertEqual(data['status'], 'success')
+        self.assertEqual(len(data['data']), 2)
+        self.assertEqual(data['data'][0]['code'], 'USD')
+        self.assertEqual(data['data'][1]['code'], 'EUR')

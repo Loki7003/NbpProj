@@ -1,0 +1,7 @@
+form label{
+    padding: 10px;
+}
+form select, input{
+    width: 200px; 
+    height: 30px;;
+}

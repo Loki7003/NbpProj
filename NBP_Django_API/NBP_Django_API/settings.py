@@ -57,7 +57,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://172.18.0.5:4200",
     "http://172.18.0.4:80",
     "http://localhost:6004",
-    "http://172.18.0.2:8000"
+    "http://172.18.0.2:8000",
 ]
 
 ROOT_URLCONF = 'NBP_Django_API.urls'

@@ -1,0 +1,16 @@
+<h2>Kursy historyczne waluty {{ currencyCode }}:</h2>
+
+<table>
+    <thead>
+      <tr>
+        <th>Data</th>
+        <th>Kurs</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let rate of rates">
+        <td>{{ rate.date }}</td>
+        <td>{{ rate.rate }}</td>
+      </tr>
+    </tbody>
+  </table>

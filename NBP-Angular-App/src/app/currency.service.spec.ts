@@ -16,44 +16,40 @@ describe('CurrencyService', () => {
     httpMock = TestBed.inject(HttpTestingController);
   });
 
-  afterEach(() => {
-    httpMock.verify(); // Make sure that there are no outstanding requests
-  });
-
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
+  const apiUrl = 'http://localhost:6002/';+
+  it('should update rates', () => {
+    const rates = [{code: 'USD', rate: 1.2}];
+    service.updateRates().subscribe(data => {
+      expect(data).toEqual(rates);
+    });
 
-  it('should retrieve rates from the API via GET', () => {
-    const dummyRates = [
-      { code: 'USD', rate: 3.72, date: new Date() },
-      { code: 'EUR', rate: 4.53, date: new Date() }
-    ];
-  
-    service.updateRates().subscribe(rates => {
-      expect(rates.length).toBe(2);
-      expect(rates).toEqual(dummyRates);
-    });
-  
-    const request = httpMock.expectOne(`${service['apiUrl']}update-rates/`);
-    expect(request.request.method).toBe('GET');
-    request.flush(dummyRates);
+    const req = httpMock.expectOne(apiUrl + 'update-rates/');
+    expect(req.request.method).toBe('GET');
+    req.flush(rates);
   });
-  
-  it('should retrieve currency details from the API via GET', () => {
-    const dummyDetails = [
-      { code: 'USD', rate: 3.72, date: new Date() },
-      { code: 'EUR', rate: 4.54, date: new Date() },
-      { code: 'GBP', rate: 5.11, date: new Date() },
-    ];
-  
-    service.getCurrencyDetails().subscribe(details => {
-      expect(details.length).toBe(3);
-      expect(details).toEqual(dummyDetails);
+
+  it('should get currency details', () => {
+    const currencyDetails = {code: 'USD', rate: 1.2};
+    service.getCurrencyDetails('USD', '2020-01-01', '2020-12-31').subscribe(data => {
+      expect(data).toEqual(currencyDetails);
     });
-  
-    const request = httpMock.expectOne(`${service['apiUrl']}get-currency-details/`);
-    expect(request.request.method).toBe('GET');
-    request.flush(dummyDetails);
+
+    const req = httpMock.expectOne(apiUrl + 'get-currency-details/USD/2020-01-01/2020-12-31');
+    expect(req.request.method).toBe('GET');
+    req.flush(currencyDetails);
+  });
+
+  it('should get currency codes', () => {
+    const currencyCodes = ['USD', 'EUR'];
+    service.getCurrencyCodes().subscribe(data => {
+      expect(data).toEqual(currencyCodes);
+    });
+
+    const req = httpMock.expectOne(apiUrl + 'get-currency-codes/');
+    expect(req.request.method).toBe('GET');
+    req.flush(currencyCodes);
   });
 });

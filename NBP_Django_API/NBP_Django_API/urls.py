@@ -19,5 +19,7 @@ from . import views
 
 urlpatterns = [
     path('update-rates/', views.update_rates, name='update_rates'),
-    path('get-currency-details/', views.get_currency_details, name='get_currency_details'),
+    path('get-historical-rates/', views.get_historical_rates, name='get_historical_rates'),
+    path('get-currency-details/<str:currency_code>/<str:start_date>/<str:end_date>/', views.get_currency_details, name='get_currency_details'),
+    path('get-currency-codes/', views.get_currency_codes, name='get_currency_codes'),
 ]

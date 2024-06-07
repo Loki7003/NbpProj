@@ -14,7 +14,11 @@ export class CurrencyService {
     return this.http.get<any>(this.apiUrl + 'update-rates/');
   }
 
-  getCurrencyDetails(): Observable<any> {
-    return this.http.get<any>(this.apiUrl + 'get-currency-details/');
+  getCurrencyDetails(currencyCode: string, startDate: string, endDate: string): Observable<any> {
+    return this.http.get<any>(this.apiUrl + 'get-currency-details/'+ currencyCode + '/' + startDate + '/' + endDate);
+  }
+
+  getCurrencyCodes(): Observable<any> {
+    return this.http.get<any>(this.apiUrl + 'get-currency-codes/');
   }
 }

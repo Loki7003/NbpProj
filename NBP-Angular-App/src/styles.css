@@ -79,8 +79,7 @@ button:hover {
 
 form{
     font-size: 1.3rem;
-    position:absolute  ;
-    right: 6rem;
+    text-align: center;
 }
 
 h2{

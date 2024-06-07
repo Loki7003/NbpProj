@@ -1,23 +1,32 @@
+<h2>Wybierz walutę i przedział dat:</h2>
+<form (ngSubmit)="onSubmit($event)">
+  <label for="currencyCode">Kod waluty:</label>
+  <select id="currencyCode" (change)="onCurrencyCodeChange($event)">
+    <option>Wybierz walutę</option>
+    <option *ngFor="let currencyCode of currencyCodes">{{ currencyCode }}</option>
+  </select>
 
-<form>
-    <label for="groupBy">Grupuj według:</label>
-    <select id="groupBy" (change)="onGroupByChange($event)">
-      <option value="year">Rok</option>
-      <option value="quarter">Kwartał</option>
-      <option value="month">Miesiąc</option>
-      <option value="day">Dzień</option>
-    </select>
+  <label for="sortRange">Zakres filtrowania:</label>
+  <select id="sortRange" (change)="onDateRangeChange($event)">
+    <option>Wybierz zakres filtrowania</option>
+    <option *ngFor="let dateRange of dateRanges" [value]="dateRange">{{ dateRange }}</option>
+  </select>
+
+   <label for="date" *ngIf="selectedDateRange === 'Dzień' || selectedDateRange === 'Miesiąc'">Data:</label>
+  <input id="date" type="date" (change)="onStartDateChange($event)" *ngIf="selectedDateRange === 'Dzień' || selectedDateRange === 'Miesiąc'">
+
+  <label for="quarter" *ngIf="selectedDateRange === 'Kwartał'">Data:</label>
+  <select id="quarter" (change)="onQuarterChange($event)" *ngIf="selectedDateRange === 'Kwartał'">
+    <option>Wybierz kwartał</option>
+    <option *ngFor="let quarter of quarters">{{ quarter }}</option>
+  </select>
+
+  <label for="year" *ngIf="selectedDateRange === 'Rok'">Data:</label>
+  <select id="year" (change)="onYearChange($event)" *ngIf="selectedDateRange === 'Rok'">
+    <option>Wybierz rok</option>
+    <option *ngFor="let year of years">{{ year }}</option>
+  </select>
+
+  <br />
+  <button type="submit">Wyświetl</button>
 </form>
-<h2>Kursy historyczne:</h2>
-<div *ngIf="groupedData">
-  <div *ngFor="let group of groupedData | keyvalue">
-    <table>
-        <th colspan="3"><h3>{{ group.key }}</h3></th>
-        <tr *ngFor="let currency of group.value">
-            <td>{{ currency.date }}</td>
-            <td>{{ currency.code }}</td>
-            <td>{{ currency.rate }}</td>
-        </tr>
-    </table>
-    </div>
-</div>

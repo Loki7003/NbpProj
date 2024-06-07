@@ -1,8 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { of } from 'rxjs';
 import { CurrencyComponent } from './currency.component';
 import { CurrencyService } from '../currency.service';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+
+import { of } from 'rxjs';
 
 describe('CurrencyComponent', () => {
   let component: CurrencyComponent;
@@ -13,9 +14,7 @@ describe('CurrencyComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [ CurrencyComponent ],
       imports: [ HttpClientTestingModule ],
-      providers: [ CurrencyService ]
-    })
-    .compileComponents();
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -30,13 +29,10 @@ describe('CurrencyComponent', () => {
   });
 
   it('should update rates', () => {
-    const dummyRates = { data: [
-      { code: 'USD', rate: 3.72 },
-      { code: 'EUR', rate: 4.53 }
-    ]};
-    
-    spyOn(currencyService, 'updateRates').and.returnValue(of(dummyRates));
+    const rates = [{code: 'USD', rate: 1.2}, {code: 'EUR', rate: 0.9}];
+    spyOn(currencyService, 'updateRates').and.returnValue(of({data: rates}));
     component.updateRates();
-    expect(component.rates).toEqual(dummyRates.data);
+    expect(component.rates).toEqual(rates);
+    expect(component.showRates).toBeTrue();
   });
 });
